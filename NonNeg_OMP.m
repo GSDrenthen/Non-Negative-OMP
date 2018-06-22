@@ -1,0 +1,50 @@
+function [MWF] = NonNeg_OMP(A,y,T2Times,RI)
+% Adaptations to the Canonical Implementation of Non-Negative Orthogonal
+% Matching Pursuit to better suit the problem of Myelin Water Fraction
+% estimation.
+%
+% Original implementation by Mehrad Yaghoobi (http://www.mehrdadya.com/)
+% Adaptations by Gerhard Drenthen
+
+for perm = 1:1:RI
+    opt = optimset('Display','off','Algorithm','levenberg-marquardt');
+    [m,n] = size(A);
+    tmp = 1:1:n;
+    weight_fun = exp(-1.*(0:2/RI:2-2/RI).^2);
+    residual = zeros(RI,1);
+    x = zeros(n,1);
+    mag = 1;
+    k = 1;
+    xs = [];
+    ind = [];
+    r = y;
+    bpr = A'*r;
+    s = [randsample(tmp(T2Times<40e-3),1)';randsample(tmp(T2Times>40e-3),1)'];
+
+    while (k <= n && mag > 0) 
+        if k > 1
+            bpr(s) = 0;
+            [mag,ind] = max(bpr); 
+        end
+        if mag > 0
+            s = [s;ind];
+            As = A(:,s);
+            xs = lsqnonneg(As,y,opt);
+            if sum(abs(r)) < sum(abs(y - As*xs))
+                break
+            end      
+            r = y - As*xs;
+            bpr = A'*r;
+        end        
+        k = k+1;
+    end
+    k = k-1;
+    x(s) = xs;
+    residual(perm) = sum((y - A*x).^2);
+    
+    MWF(perm) = sum(x(T2Times < 40e-3)) / sum(x);
+end
+
+[~, ind] = sort(residual,'ascend');
+MWF = sum(MWF(ind).*weight_fun ./ sum(weight_fun));
+end
