@@ -6,7 +6,7 @@ estimation.
 
 Please cite the following paper when using this function:
 
-1. [Drenthen GS, Backes WH, Aldenkamp AP, Op ’t Veld GJ, Jansen JFA. A new
+[Drenthen GS, Backes WH, Aldenkamp AP, Op ’t Veld GJ, Jansen JFA. A new
 analysis approach for T2 relaxometry myelin water quantification: 
 Orthogonal Matching Pursuit. Magn Reson Med. 2019;81(5):3292-3303.](https://doi.org/10.1002/mrm.27600)
  
