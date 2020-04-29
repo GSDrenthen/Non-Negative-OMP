@@ -12,12 +12,12 @@ function [MWF] = NonNeg_OMP(A,y,T2Times,RI)
 % Original implementation by Mehrad Yaghoobi (http://www.mehrdadya.com/)
 % Adaptations by Gerhard Drenthen
 
+residual = zeros(RI,1);
 for perm = 1:1:RI
     opt = optimset('Display','off','Algorithm','levenberg-marquardt');
     [m,n] = size(A);
     tmp = 1:1:n;
     weight_fun = exp(-1.*(0:2/RI:2-2/RI).^2);
-    residual = zeros(RI,1);
     x = zeros(n,1);
     mag = 1;
     k = 1;
